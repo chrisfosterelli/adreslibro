@@ -1,3 +1,4 @@
+{{define "index"}}
 <!DOCTYPE html>
 <html>
   <head>
@@ -22,6 +23,7 @@
               </form>
               <form class="navbar-form navbar-right">
                 <div class="form-group">
+                  {{.currentUser.Name}}
                   <a href="/" class="btn btn-default">Ensaluti</a>
                   <a href="/registri" class="btn btn-default">Registri</a>
                 </div>
@@ -40,3 +42,4 @@
     </div>
   </body>
 </html>
+{{end}}
