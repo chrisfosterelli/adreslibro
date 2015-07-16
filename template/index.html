@@ -1,45 +1,13 @@
 {{define "index"}}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>AdresLibro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-  </head>
-  <body>
-    <div class="container-fluid">
-      <!-- Banner -->
-      <div class="row">
-        <div class="col-md-12" style="padding: 0;">
-          <nav class="navbar navbar-default" style="border-radius: 0;">
-            <div class="container">
-              <div class="navbar-header">
-                <a class="navbar-brand" href="/">ADRESLIBRO</a>
-              </div>
-              <form class="navbar-form navbar-left">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Trovu esperantuloj en...">
-                  <button type="button" class="btn btn-default">Serĉi</button>
-                </div>
-              </form>
-              <form class="navbar-form navbar-right">
-                <div class="form-group">
-                  {{.currentUser.Name}}
-                  <a href="/" class="btn btn-default">Ensaluti</a>
-                  <a href="/registri" class="btn btn-default">Registri</a>
-                </div>
-              </form>
-            </div>
-          </nav>
-        </div>
-      </div>
-      <div class="text-center"> <!-- main -->
-        <h1>La esperanta adreslibro.</h1>
-        <p>Adreslibro de esperantulojn.</p>
-        <a href="/registri" class="btn btn-default btn-lg" style="margin-top: 30px;">
-          Registri
-        </a>
-      </div>
-    </div>
-  </body>
-</html>
+{{template "header" .}}
+<div class="container-fluid">
+  <div class="text-center">
+    <h1>La esperanta adreslibro.</h1>
+    <p>Adreslibro de esperantulojn.</p>
+    <a href="/registri" class="btn btn-default btn-lg" style="margin-top: 30px;">
+      Registri
+    </a>
+  </div>
+</div>
+{{template "footer" .}}
 {{end}}

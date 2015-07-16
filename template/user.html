@@ -1,99 +1,65 @@
 {{define "user"}}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>AdresLibro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  </head>
-  <body>
-    <div class="container-fluid">
-      <!-- Banner -->
-      <div class="row">
-        <div class="col-md-12" style="padding: 0;">
-          <nav class="navbar navbar-default" style="border-radius: 0;">
-            <div class="container">
-              <div class="navbar-header">
-                <a class="navbar-brand" href="/">ADRESLIBRO</a>
-              </div>
-              <form class="navbar-form navbar-left">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Trovu esperantuloj en...">
-                  <button type="button" class="btn btn-default">Serĉi</button>
-                </div>
-              </form>
-              <form class="navbar-form navbar-right">
-                <div class="form-group">
-                  <a href="/" class="btn btn-default">Ensaluti</a>
-                  <a href="/registri" class="btn btn-default">Registri</a>
-                </div>
-              </form>
+{{template "header" .}}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8"> <!-- left -->
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="media">
+            <div class="media-left">
+              <img class="media-object img-rounded" 
+                style="width: 150px; height: 150px;"
+                src="https://pbs.twimg.com/profile_images/447497779871363072/8UZtzUuG.jpeg"
+                alt="Profile image">
             </div>
-          </nav>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8"> <!-- left -->
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <div class="media">
-                <div class="media-left">
-                  <img class="media-object img-rounded" 
-                    style="width: 150px; height: 150px;"
-                    src="https://pbs.twimg.com/profile_images/447497779871363072/8UZtzUuG.jpeg"
-                    alt="Profile image">
-                </div>
-                <div class="media-body">
-                  <h1 class="media-heading">Chris Foster</h4>
-                  <p>Kamloops, B.C, Canada</p>
-                  <p>★★★★☆</p>
-                  <em>21 jaroj</em>
-                </div>
-              </div>
-            </div>
-            <hr style="margin: 0">
-            <div class="panel-body">
-              <ul class="list-inline" style="margin-bottom: 0;">
-                <li><i class="fa fa-envelope"></i> <a href="#">Retpoŝto</a></li>
-                <li><i class="fa fa-twitter"></i> <a href="#">Twitter</a></li>
-                <li><i class="fa fa-facebook"></i> <a href="#">Facebook</a></li>
-                <li><i class="fa fa-instagram"></i> <a href="#">Instagram</a></li>
-              </ul>
-            </div>
-            <div class="panel-footer">
-              <ol class="breadcrumb" style="padding: 0; margin: 0;">
-                <li><a href="#">Bicikli</a></li>
-                <li><a href="#">Komputiloj</a></li>
-                <li><a href="#">Kurado</a></li>
-              </ol>
-            </div>
-            <div class="panel-body">
-              <button type="button" class="btn btn-sm btn-default">
-                <i class="fa fa-bookmark"></i>
-                Konservi
-              </button>
-              <button type="button" class="btn btn-sm btn-default">
-                Mesaĝi
-              </button>
-              <button class="btn btn-sm btn-default pull-right">
-                Partopreni
-              </button>
+            <div class="media-body">
+              <h1 class="media-heading">Chris Foster</h4>
+              <p>Kamloops, B.C, Canada</p>
+              <p>★★★★☆</p>
+              <em>21 jaroj</em>
             </div>
           </div>
         </div>
-        <div class="col-md-4"> <!-- right -->
-          <div class="panel">
-            <div class="panel-body">
-              <iframe frameborder="0" style="border: 0; width: 100%; height: 300px;"
-                src="https://www.google.com/maps/embed/v1/place?q=Kamloops%2C%20BC%2C%20Canada&key=AIzaSyD36_hcUtHhM1L9iLWdSVcDSlAQa4cl8Gk">
-              </iframe>
-            </div>
-          </div>
+        <hr style="margin: 0">
+        <div class="panel-body">
+          <ul class="list-inline" style="margin-bottom: 0;">
+            <li><i class="fa fa-envelope"></i> <a href="#">Retpoŝto</a></li>
+            <li><i class="fa fa-twitter"></i> <a href="#">Twitter</a></li>
+            <li><i class="fa fa-facebook"></i> <a href="#">Facebook</a></li>
+            <li><i class="fa fa-instagram"></i> <a href="#">Instagram</a></li>
+          </ul>
+        </div>
+        <div class="panel-footer">
+          <ol class="breadcrumb" style="padding: 0; margin: 0;">
+            <li><a href="#">Bicikli</a></li>
+            <li><a href="#">Komputiloj</a></li>
+            <li><a href="#">Kurado</a></li>
+          </ol>
+        </div>
+        <div class="panel-body">
+          <button type="button" class="btn btn-sm btn-default">
+            <i class="fa fa-bookmark"></i>
+            Konservi
+          </button>
+          <button type="button" class="btn btn-sm btn-default">
+            Mesaĝi
+          </button>
+          <button class="btn btn-sm btn-default pull-right">
+            Partopreni
+          </button>
         </div>
       </div>
     </div>
-  </body>
-</html>
+    <div class="col-md-4"> <!-- right -->
+      <div class="panel">
+        <div class="panel-body">
+          <iframe frameborder="0" style="border: 0; width: 100%; height: 300px;"
+            src="https://www.google.com/maps/embed/v1/place?q=Kamloops%2C%20BC%2C%20Canada&key=AIzaSyD36_hcUtHhM1L9iLWdSVcDSlAQa4cl8Gk">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{template "footer" .}}
 {{end}}
