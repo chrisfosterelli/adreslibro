@@ -47,6 +47,8 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data ma
 
 func main() {
 	http.HandleFunc("/", index)
+	http.HandleFunc("/ensaluti", login)
+	http.HandleFunc("/elsaluti", logout)
 	http.HandleFunc("/registri", register)
 	http.HandleFunc("/esperantuloj/chrisfosterelli", user)
     log.Println("Starting Server")
@@ -55,6 +57,45 @@ func main() {
 
 func index(w http.ResponseWriter, r *http.Request) {
     renderTemplate(w, r, "index", make(map[string]interface{}))
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+    if r.Method == "POST" {
+		session, err := mgo.Dial("mongodb://adreslibro:adreslibro@dogen.mongohq.com:10096/adreslibro_dev")
+        if err != nil {
+            panic(err)
+        }
+        defer session.Close()
+        user := User{}
+		c := session.DB("").C("users")
+        err = c.Find(bson.M{"email":r.FormValue("email")}).One(&user)
+        if (err != nil) {
+            log.Println("not found")
+            http.Redirect(w, r, "/ensaluti", http.StatusFound)
+            return
+        }
+        if (user.Password != r.FormValue("password")) {
+            log.Println("invalid pass")
+            log.Println(r.FormValue("password"))
+            log.Println(user)
+            log.Println(user.Password)
+            http.Redirect(w, r, "/ensaluti", http.StatusFound)
+            return
+        }
+        sessionz, _ := store.Get(r, "adreslibro")
+        sessionz.Values["user"] = user.Name
+        sessionz.Save(r, w)
+		http.Redirect(w, r, "/", http.StatusFound)
+    } else {
+        renderTemplate(w, r, "login", make(map[string]interface{}))
+    }
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+    sessionz, _ := store.Get(r, "adreslibro")
+    sessionz.Values["user"] = ""
+    sessionz.Save(r, w)
+    http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {

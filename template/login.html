@@ -1,0 +1,34 @@
+{{define "login"}}
+{{template "header" .}}
+<div class="container">
+  <div class="row">
+    <div class="col-md-4"> <!-- left -->
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <form method="POST">
+            <div class="form-group">
+              <label for="email">Retpoŝto</label>
+              <input type="email" class="form-control" name="email" id="email" placeholder="Ex: john.doe@gmail.com">
+            </div>
+            <div class="form-group">
+              <label for="password">Pasvorto</label>
+              <input type="password" class="form-control" name="password" id="password" placeholder="Ex: s3curep4ssw0rd">
+            </div>
+            <button type="submit" class="btn btn-default">
+              Ensaluti
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8"> <!-- right -->
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <p>Saluton!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{template "footer" .}}
+{{end}}

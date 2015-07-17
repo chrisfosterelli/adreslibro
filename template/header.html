@@ -23,9 +23,12 @@
               </form>
               <form class="navbar-form navbar-right">
                 <div class="form-group">
-                  {{.currentUser.Name}}
-                  <a href="/" class="btn btn-default">Ensaluti</a>
+                  {{if .currentUser.Name}}
+                  <a href="/elsaluti" class="btn btn-default">Logout</a>
+                  {{else}}
+                  <a href="/ensaluti" class="btn btn-default">Ensaluti</a>
                   <a href="/registri" class="btn btn-default">Registri</a>
+                  {{end}}
                 </div>
               </form>
             </div>
