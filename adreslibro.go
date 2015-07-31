@@ -11,6 +11,9 @@ import (
 
 var store = sessions.NewCookieStore([]byte("!adr3sl1br0s3cr3t5@"))
 var tmplt = template.Must(template.ParseGlob("template/*"))
+var mgoSession *mgo.Session
+
+/* Data structures */
 
 type User struct {
 	Id       bson.ObjectId `bson:"_id"`
@@ -20,48 +23,49 @@ type User struct {
 	Location string
 }
 
-//func getUser(email string) {
-    //user := User{}
-    //query := bson.M{"email":email}
-    //err := c.Find(query).One(&user)
-    //if err != nil {
-        //log.Error("Could not fetch user", err)
-    //}
-    //return &user
-//}
+/* Helper functions */
+
+func getMgoSession() *mgo.Session {
+    if mgoSession == nil {
+        var err error
+        mgoSession, err = mgo.Dial("mongodb://adreslibro:adreslibro@dogen.mongohq.com:10096/adreslibro_dev")
+        if err != nil {
+            panic(err)
+        }
+    }
+    return mgoSession.Clone()
+}
+
+func getUserSession(r *http.Request) *sessions.Session {
+    userSession, _ := store.Get(r, "adreslibro")
+    return userSession
+}
 
 func getCurrentUser(r *http.Request) *User {
-    mgoSession, err := mgo.Dial("mongodb://adreslibro:adreslibro@dogen.mongohq.com:10096/adreslibro_dev")
-    if err != nil {
-        panic(err)
-    }
-    defer mgoSession.Close()
-    userSession, _ := store.Get(r, "adreslibro")
-    stringId := userSession.Values["id"].(string)
-    log.Println(stringId)
     user := User{}
-    if !bson.IsObjectIdHex(stringId) {
-        log.Println("Not a valid Object ID Hex")
-        return &user
-    }
-    mgoId := bson.ObjectIdHex(stringId)
-    c := mgoSession.DB("").C("users")
-    err = c.FindId(mgoId).One(&user)
-    log.Println(err)
-    if err != nil {
-        return &user
+    userSession := getUserSession(r)
+    mgoSession := getMgoSession()
+    id := userSession.Values["id"].(string)
+    if bson.IsObjectIdHex(id) {
+        mId := bson.ObjectIdHex(id)
+        c := mgoSession.DB("").C("users")
+        _ = c.FindId(mId).One(&user)
     }
     return &user
 }
 
 func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data map[string]interface{}) {
+    if data == nil {
+        data = make(map[string]interface{})
+    }
     data["currentUser"] = getCurrentUser(r)
-    log.Println(data["currentUser"])
     err := tmplt.ExecuteTemplate(w, tmpl, data)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }
 }
+
+/* Main */
 
 func main() {
 	http.HandleFunc("/", index)
@@ -73,79 +77,68 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
+/* Routes */
+
 func index(w http.ResponseWriter, r *http.Request) {
-    renderTemplate(w, r, "index", make(map[string]interface{}))
+    renderTemplate(w, r, "index", nil)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
     if r.Method == "POST" {
-		session, err := mgo.Dial("mongodb://adreslibro:adreslibro@dogen.mongohq.com:10096/adreslibro_dev")
-        if err != nil {
-            panic(err)
-        }
-        defer session.Close()
         user := User{}
-		c := session.DB("").C("users")
-        err = c.Find(bson.M{"email":r.FormValue("email")}).One(&user)
+        mgoSession := getMgoSession()
+		c := mgoSession.DB("").C("users")
+        err := c.Find(bson.M{"email":r.FormValue("email")}).One(&user)
         if (err != nil) {
-            log.Println("not found")
+            log.Println("User not found")
             http.Redirect(w, r, "/ensaluti", http.StatusFound)
             return
         }
         if (user.Password != r.FormValue("password")) {
             log.Println("invalid pass")
-            log.Println(r.FormValue("password"))
-            log.Println(user)
-            log.Println(user.Password)
             http.Redirect(w, r, "/ensaluti", http.StatusFound)
             return
         }
-        sessionz, _ := store.Get(r, "adreslibro")
-        sessionz.Values["id"] = user.Id.Hex()
-        sessionz.Save(r, w)
+        userSession := getUserSession(r)
+        userSession.Values["id"] = user.Id.Hex()
+        userSession.Save(r, w)
 		http.Redirect(w, r, "/", http.StatusFound)
     } else {
-        renderTemplate(w, r, "login", make(map[string]interface{}))
+        renderTemplate(w, r, "login", nil)
     }
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
-    sessionz, _ := store.Get(r, "adreslibro")
-    sessionz.Values["id"] = ""
-    sessionz.Save(r, w)
+    userSession := getUserSession(r)
+    userSession.Values["id"] = ""
+    userSession.Save(r, w)
     http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		session, err := mgo.Dial("mongodb://adreslibro:adreslibro@dogen.mongohq.com:10096/adreslibro_dev")
-		if err != nil {
-			panic(err)
-		}
-		defer session.Close()
-		u := User{
+		newUser := User{
 			Name:     r.FormValue("name"),
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 			Location: r.FormValue("location"),
 		}
-        u.Id = bson.NewObjectId()
-		c := session.DB("").C("users")
-		err = c.Insert(&u)
+        newUser.Id = bson.NewObjectId()
+        mgoSession = getMgoSession()
+		c := mgoSession.DB("").C("users")
+		err := c.Insert(&newUser)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
-        log.Println("Result")
-        log.Println(u.Id.Hex())
-        sessionz, _ := store.Get(r, "adreslibro")
-        sessionz.Values["id"] = u.Id.Hex()
-        sessionz.Save(r, w)
+        userSession := getUserSession(r)
+        userSession.Values["id"] = newUser.Id.Hex()
+        userSession.Save(r, w)
 		http.Redirect(w, r, "/", http.StatusFound)
 	} else {
-        renderTemplate(w, r, "register", make(map[string]interface{}))
+        renderTemplate(w, r, "register", nil)
 	}
 }
 
 func user(w http.ResponseWriter, r *http.Request) {
-    renderTemplate(w, r, "user", make(map[string]interface{}))
+    renderTemplate(w, r, "user", nil)
 }
