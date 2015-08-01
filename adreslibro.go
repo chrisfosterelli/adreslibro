@@ -6,6 +6,7 @@ import (
 	"html/template"
     "gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "golang.org/x/crypto/bcrypt"
     "github.com/gorilla/sessions"
 )
 
@@ -24,6 +25,27 @@ type User struct {
 }
 
 /* Helper functions */
+
+func hashPassword(s string) string {
+    byteString := []byte(s)
+    hash, err := bcrypt.GenerateFromPassword(byteString, 10)
+    if err != nil {
+        panic(err)
+    }
+    return string(hash)
+}
+
+func isMatchingPassword(hash string, s string) bool {
+    byteHash := []byte(hash)
+    byteString := []byte(s)
+    err := bcrypt.CompareHashAndPassword(byteHash, byteString)
+    if err == nil {
+        return true
+    } else {
+        log.Println(err)
+        return false
+    }
+}
 
 func getMgoSession() *mgo.Session {
     if mgoSession == nil {
@@ -89,13 +111,13 @@ func login(w http.ResponseWriter, r *http.Request) {
         mgoSession := getMgoSession()
 		c := mgoSession.DB("").C("users")
         err := c.Find(bson.M{"email":r.FormValue("email")}).One(&user)
-        if (err != nil) {
+        if err != nil {
             log.Println("User not found")
             http.Redirect(w, r, "/ensaluti", http.StatusFound)
             return
         }
-        if (user.Password != r.FormValue("password")) {
-            log.Println("invalid pass")
+        if !isMatchingPassword(user.Password, r.FormValue("password")) {
+            log.Println("Invalid pass")
             http.Redirect(w, r, "/ensaluti", http.StatusFound)
             return
         }
@@ -118,12 +140,12 @@ func logout(w http.ResponseWriter, r *http.Request) {
 func register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		newUser := User{
+            Id:       bson.NewObjectId(),
 			Name:     r.FormValue("name"),
 			Email:    r.FormValue("email"),
-			Password: r.FormValue("password"),
+            Password: hashPassword(r.FormValue("password")),
 			Location: r.FormValue("location"),
 		}
-        newUser.Id = bson.NewObjectId()
         mgoSession = getMgoSession()
 		c := mgoSession.DB("").C("users")
 		err := c.Insert(&newUser)
