@@ -24,7 +24,7 @@
               <form class="navbar-form navbar-right">
                 <div class="form-group">
                   {{if .currentUser.Name}}
-                  <span style="padding-right: 10px;">{{.currentUser.Name}}</span>
+                  <a href="/esperantuloj/{{.currentUser.Id.Hex}}" style="padding-right: 10px;">{{.currentUser.Name}}</a>
                   <a href="/elsaluti" class="btn btn-default">Logout</a>
                   {{else}}
                   <a href="/ensaluti" class="btn btn-default">Ensaluti</a>

@@ -7,6 +7,7 @@ import (
     "gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
     "golang.org/x/crypto/bcrypt"
+    "github.com/gorilla/mux"
     "github.com/gorilla/sessions"
 )
 
@@ -90,12 +91,14 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data ma
 /* Main */
 
 func main() {
-	http.HandleFunc("/", index)
-	http.HandleFunc("/ensaluti", login)
-	http.HandleFunc("/elsaluti", logout)
-	http.HandleFunc("/registri", register)
-	http.HandleFunc("/esperantuloj/chrisfosterelli", user)
+    r := mux.NewRouter()
+	r.HandleFunc("/", index)
+	r.HandleFunc("/ensaluti", login)
+	r.HandleFunc("/elsaluti", logout)
+	r.HandleFunc("/registri", register)
+	r.HandleFunc("/esperantuloj/{user}", user)
     log.Println("Starting Server")
+    http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
 }
 
