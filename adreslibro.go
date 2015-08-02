@@ -165,5 +165,20 @@ func register(w http.ResponseWriter, r *http.Request) {
 }
 
 func user(w http.ResponseWriter, r *http.Request) {
-    renderTemplate(w, r, "user", nil)
+    user := User{}
+    vars := mux.Vars(r)
+    strId := vars["user"]
+    mgoSession := getMgoSession()
+    if !bson.IsObjectIdHex(strId) {
+        panic("Couldn't find")
+    }
+    mId := bson.ObjectIdHex(strId)
+    c := mgoSession.DB("").C("users")
+    err := c.FindId(mId).One(&user)
+    if err != nil {
+        panic("Couldn't find")
+    }
+    data := make(map[string]interface{})
+    data["user"] = user
+    renderTemplate(w, r, "user", data)
 }

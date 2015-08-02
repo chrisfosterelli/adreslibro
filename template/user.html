@@ -13,8 +13,8 @@
                 alt="Profile image">
             </div>
             <div class="media-body">
-              <h1 class="media-heading">Chris Foster</h4>
-              <p>Kamloops, B.C, Canada</p>
+              <h1 class="media-heading">{{.user.Name}}</h1>
+              <p>{{.user.Location}}</p>
               <p>★★★★☆</p>
               <em>21 jaroj</em>
             </div>
@@ -55,7 +55,7 @@
       <div class="panel">
         <div class="panel-body">
           <iframe frameborder="0" style="border: 0; width: 100%; height: 300px;"
-            src="https://www.google.com/maps/embed/v1/place?q=Kamloops%2C%20BC%2C%20Canada&key=AIzaSyD36_hcUtHhM1L9iLWdSVcDSlAQa4cl8Gk">
+            src="https://www.google.com/maps/embed/v1/place?q={{.user.Location}}&key=AIzaSyD36_hcUtHhM1L9iLWdSVcDSlAQa4cl8Gk">
           </iframe>
         </div>
       </div>
